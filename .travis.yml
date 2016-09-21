@@ -8,3 +8,10 @@ addons:
     - mongodb-3.2-precise
     packages:
     - mongodb-org-server
+deploy:
+  provider: heroku
+  api_key:
+    secure: WaM5cgmA0NTyhYSTeBOI9SFFwHbDHLUnXqQWQSsrI+lMK6DD1gq2wtNZmFJPixoKpjRG4NknvQ6EZfPhKPyg0WtSsHAAqg/IllyPFEbuep5GhUBlLApxThbdMyG9hlfQG9tL5C6T7z9wqMCc3PhIZT3jhZz4h4X1B/llX2DvnC8kldAf8PjveoAU+Q99CiAgL+8HFD5015r4DRF+TFqARAAH8dgKNtgQoBMr70Kt8P2vYgCA1B45+l+Sxyg6C8VyScXPFiyxTT3pMp9Jeu0d1NDbUy4f/dUCS1exCEXh5i0qqtgIdLnmVO0E4uzVgj/uop4M4W5f3Qp7MuwlGGfp4wFUj0GLYPFXYoT3PBLSNcQE+NEmolFsGC1Uaot8VbHkRlMCJheFF05yD2XTSzyx6CF7602DhpSvWkbOMcGI4f3ZZsSPs98pK+J+Ou+IKC57GbZPxz4vYeCkuadOjZUGSFNo9eQofsia9tqCKnBvpu3hOeV4kRqVRXUtoJ5YJ8XtMTQo9CdXMR22TLbTjpI62idMj7ZYoB1PY08wZzgJpl38Y0etUeZxRkMNk58miUZAmTu1cotKtKDBdorIFXuNtsAlMxLJ1lXvKroQOmrb7lbpO+rfIornH3zytyy32Nl3etV+tCr7U91mcBzNTecbmriMla4mFv1vWqV6HMxBh3w=
+  app: quiet-harbor-35274
+  on:
+    repo: surbhiposwalia/Sup_messaging_API

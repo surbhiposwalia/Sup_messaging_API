@@ -45,7 +45,7 @@ passport.use(strategy);
 app.use(passport.initialize());
 
 var runServer = function(callback) {
-    var databaseUri = process.env.DATABASE_URI || global.databaseUri /*|| 'mongodb://localhost/sup'*/||'mongodb://<dbuser>:<dbpassword>@ds035766.mlab.com:35766/sup';
+    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://localhost/sup';
     mongoose.connect(databaseUri).then(function() {
         var port = process.env.PORT || 8080;
         var server = app.listen(port, function() {
@@ -200,20 +200,24 @@ app.put("/users/:userId", passport.authenticate('basic', {
     var inputID = req.params.userId;
     var inputUsername = req.body.username;
     var inputPassword = req.body.password;
-    console.log(inputID, typeof inputID, inputUsername,inputPassword, req.user._id, typeof req.user._id);
+   if (typeof inputPassword !== 'string') {
+            return res.status(422).json({
+                    message: 'Incorrect field type: password'
+                    });
+    }
     if (inputID === req.user._id.toString()){
-        console.log("inputId matched with UserId");
+ 
         bcrypt.genSalt(10, function(err, salt) {
             if (err) {
                 return res.status(500).json({
                     message: 'Interal server error'
                 });
             }
-            console.log("no internal server error");
+       
             bcrypt.hash(inputPassword, salt, function(err, hash) {
                 if (err) {
                     return res.status(500).json({
-                        message: 'Internal server error'
+                        message: 'Error : The Password needs to be string'
                     });
                 }
                 User.findByIdAndUpdate(inputID, {
@@ -233,11 +237,7 @@ app.put("/users/:userId", passport.authenticate('basic', {
                             message: 'Incorrect field type: username'
                         });
                     }
-                    else if (typeof inputPassword !== 'string') {
-                        return res.status(422).json({
-                            message: 'Incorrect field type: password'
-                        });
-                    }
+                    
                     return res.status(200).json({});
                 });
             });
@@ -259,7 +259,10 @@ app.delete("/users/:userId", passport.authenticate('basic', {
                 message: 'User not found'
             });
         }
-        return res.status(200).json({});
+        if(req.user && inputID === req.user._id.toString()){
+                return res.status(200).json({});
+            }
+        return res.status(401).json({ message: "Unauthorized!!"});
     });
 });
 ////----------------------///////////GET MESSAGES/////--------------//////////

@@ -56,8 +56,6 @@ describe('User endpoints', function() {
                         res.body.length.should.equal(1);
                     });
             });
-
-            
         });
         
     ///////**************//////POST////////////**********///////
@@ -250,18 +248,19 @@ describe('User endpoints', function() {
                         // res.password.should.equal(hashedPassword);
                     });
             });
-            //not done yet...
-            it.skip('should create a user if they don\'t exist', function() {
-                var user = {
-                    _id: '000000000000000000000000',
-                    username: 'joe'
-                };
+         
+            it('should create a user if they don\'t exist', function() {
+                // var user = {
+                //     _id: '000000000000000000000000',
+                //     username: 'joe'
+                // };
                 // Request to add a new user
                 return chai.request(app)
                     .put(this.singlePattern.stringify({
-                        userId: user._id
+                        userId: adminId
                     }))
-                    .send(user)
+                    .send(testUser)
+                    .auth('admin','password')
                     .then(function(res) {
                         // Check that an empty object was returned
                         res.should.have.status(200);
@@ -271,27 +270,26 @@ describe('User endpoints', function() {
                         res.body.should.be.empty;
 
                         // Fetch the user from the database
-                        return User.findById(user._id).exec();
+                        return User.findById(adminId).exec();
                     })
                     .then(function(res) {
                         // Check that the user has been added
                         should.exist(res);
                         res.should.have.property('username');
                         res.username.should.be.a('string');
-                        res.username.should.equal(user.username);
+                        res.username.should.equal(testUser.username);
                     });
             });
-            it.skip('should reject users without a username', function() {
-                var user = {
-                    _id: '000000000000000000000000'
-                };
+            it('should reject users without a username', function() {
+                delete testUser.username;
                 var spy = makeSpy();
                 // Add a user without a username
                 return chai.request(app)
                     .put(this.singlePattern.stringify({
-                        userId: user._id
+                        userId: adminId
                     }))
-                    .send(user)
+                    .send(testUser)
+                    .auth('admin','password')
                     .then(spy)
                     .catch(function(err) {
                         // If the request fails, make sure it contains the
@@ -302,25 +300,23 @@ describe('User endpoints', function() {
                         res.charset.should.equal('utf-8');
                         res.body.should.be.an('object');
                         res.body.should.have.property('message');
-                        res.body.message.should.equal('Missing field: username');
+                        res.body.message.should.equal('Missing field: username or password');
                     })
                     .then(function() {
                         // Check that the request didn't succeed
                         spy.called.should.be.false;
                     });
             });
-            it.skip('should reject non-string usernames', function() {
-                var user = {
-                    _id: '000000000000000000000000',
-                    username: 42
-                };
+            it('should reject non-string usernames', function() {
+                testUser.username=42;
                 var spy = makeSpy();
                 // Add a user with a non-string username
                 return chai.request(app)
                     .put(this.singlePattern.stringify({
-                        userId: user._id
+                        userId: adminId
                     }))
-                    .send(user)
+                    .send(testUser)
+                    .auth('admin','password')
                     .then(spy)
                     .catch(function(err) {
                         // If the request fails, make sure it contains the
@@ -338,15 +334,45 @@ describe('User endpoints', function() {
                         spy.called.should.be.false;
                     });
             });
+            it('should reject non-string password', function() {
+                testUser.password=42;
+                var spy = makeSpy();
+                // Add a user with a non-string username
+                return chai.request(app)
+                    .put(this.singlePattern.stringify({
+                        userId: adminId
+                    }))
+                    .send(testUser)
+                    .auth('admin','password')
+                    .then(spy)
+                    .catch(function(err) {
+                        // If the request fails, make sure it contains the
+                        // error
+                        var res = err.response;
+                        res.should.have.status(422);
+                        res.type.should.equal('application/json');
+                        res.charset.should.equal('utf-8');
+                        res.body.should.be.an('object');
+                        res.body.should.have.property('message');
+                        res.body.message.should.equal('Incorrect field type: password');
+                    })
+                    .then(function() {
+                        // Check that the request didn't succeed
+                        spy.called.should.be.false;
+                    });
+            });
         });
         ///////**********//////////DELETE////////////**********//
 
-        describe.skip('DELETE', function() {
+        describe('DELETE', function() {
             it('should 404 on non-existent users', function() {
                 var spy = makeSpy();
                 // Try to delete a non-existent user
                 return chai.request(app)
-                    .delete(this.singlePattern.stringify({userId: '000000000000000000000000'}))
+                    .delete(this.singlePattern.stringify({
+                        userId:"000000000000000"
+                    }))
+                    .auth('admin','password')
                     .then(spy)
                     .catch(function(err) {
                         // If the request fails, make sure it contains the
@@ -364,22 +390,22 @@ describe('User endpoints', function() {
                         spy.called.should.be.false;
                     });
             });
-            it.skip('should delete a user', function() {
-                var user = {
-                    username: 'joe'
-                };
+            it('should delete a user', function() {
+                
                 var userId;
                 // Create a user in the database
-                return new User(user).save()
+                return new User(testUser).save()
                     .then(function(res) {
                         userId = res._id.toString();
                         // Request to delete the user
                         return chai.request(app)
                             .delete(this.singlePattern.stringify({
-                                userId: userId
-                            }));
+                                userId: adminId
+                            })).auth('admin','password')
                     }.bind(this))
                     .then(function(res) {
+                        // console.log(res.body);
+                        // console.log(adminId);
                         // Make sure that an empty object was returned
                         res.should.have.status(200);
                         res.type.should.equal('application/json');
@@ -388,7 +414,7 @@ describe('User endpoints', function() {
                         res.body.should.be.empty;
 
                         // Try to fetch the user from the database
-                        return User.findById(userId);
+                        return User.findById(adminId);
                     })
                     .then(function(res) {
                         // Make sure that no user could be fetched

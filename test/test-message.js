@@ -12,11 +12,21 @@ var Message = require('../models/message');
 var makeSpy = require('./spy');
 
 var should = chai.should();
-
+var bcrypt=require('bcryptjs');
 chai.use(chaiHttp);
 
-describe.skip('Message endpoints', function() {
+describe('Message endpoints', function() {
     var server;
+    var hasher=function(password){
+        var hashedPassword 
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(password, salt, function(err, hash) {
+            return hashedPassword = hash
+            });          
+   });
+    } 
+   hasher('password');
+   console.log(hasher('password'));
     beforeEach(function(done) {
         this.listPattern = new UrlPattern('/messages');
         this.singlePattern = new UrlPattern('/messages/:messageId');
@@ -25,16 +35,19 @@ describe.skip('Message endpoints', function() {
             // Add three example users
             this.alice = {
                 username: 'alice',
+                password:'pass',
                 _id: 'aaaaaaaaaaaaaaaaaaaaaaaa'
             };
 
             this.bob = {
                 username: 'bob',
+                 password:'pass',
                 _id: 'bbbbbbbbbbbbbbbbbbbbbbbb'
             };
 
             this.chuck = {
                 username: 'chuck',
+                 password:'pass',
                 _id: 'cccccccccccccccccccccccc'
             };
 
