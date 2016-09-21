@@ -250,6 +250,7 @@ describe('User endpoints', function() {
                         // res.password.should.equal(hashedPassword);
                     });
             });
+            //not done yet...
             it.skip('should create a user if they don\'t exist', function() {
                 var user = {
                     _id: '000000000000000000000000',
