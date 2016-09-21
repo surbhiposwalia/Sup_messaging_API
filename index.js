@@ -45,7 +45,7 @@ passport.use(strategy);
 app.use(passport.initialize());
 
 var runServer = function(callback) {
-    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://localhost/sup';
+    var databaseUri = process.env.DATABASE_URI || global.databaseUri /*|| 'mongodb://localhost/sup'*/||'mongodb://<dbuser>:<dbpassword>@ds035766.mlab.com:35766/sup';
     mongoose.connect(databaseUri).then(function() {
         var port = process.env.PORT || 8080;
         var server = app.listen(port, function() {
