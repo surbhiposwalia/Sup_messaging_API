@@ -2,15 +2,27 @@
   "name": "chat-example",
   "version": "0.0.0",
   "description": "A chat example to showcase how to use `socket.io` with a static `express` server with `async` for control flow.",
-  "main": "server.js",
+  "main": "sup-template-master/index.js",
   "repository": "",
   "author": "Mostafa Eweda <mo.eweda@gmail.com>",
+   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^2.0.1",
+    "mocha": "^2.4.5",
+    "url-pattern": "^1.0.1"
+  },
   "dependencies": {
     "async": "~0.2.8",
     "bcryptjs": "^2.3.0",
     "express": "~3.2.4",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0",
-    "socket.io": "~0.9.14"
+    "socket.io": "~0.9.14",
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.13"
+  },
+  "scripts": {
+    "test": "mocha --colors"
   }
 }
