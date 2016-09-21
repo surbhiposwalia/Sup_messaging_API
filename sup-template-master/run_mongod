@@ -1,1 +1,0 @@
-mongod --bind_ip=$IP --dbpath=/home/ubuntu/workspace/sup-template-master/mongo_data --nojournal --rest "$@"
